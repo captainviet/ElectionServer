@@ -1,0 +1,8 @@
+module.exports = {
+  app: {
+    mongo:
+    'mongourl',
+    db: 'db',
+    port: port-number,
+  },
+}
