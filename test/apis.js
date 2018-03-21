@@ -55,9 +55,7 @@ describe('Election REST APIs', function() {
       const encodedName = encodeURIComponent(candidateName)
       const form = {
         name: encodedName,
-        pos: [
-          'pre', 'vic'
-        ],
+        pos: 'pre',
       }
       const candidateEradicatePaths = [
         host, candidate.self, eradicate.self
@@ -91,7 +89,7 @@ describe('Election REST APIs', function() {
           expect(data).to.have.property('name')
           expect(data).to.have.property('pos')
           expect(data.name).to.equal(encodedName)
-          expect(data.pos).to.be.an('array')
+          expect(data.pos).to.equal('pre')
           expect(error).to.be.null
           done()
         })
@@ -149,8 +147,7 @@ describe('Election REST APIs', function() {
                     expect(candidate).to.have.property('name')
                     expect(candidate).to.have.property('pos')
                     expect(candidate.name).to.be.a('string')
-                    expect(candidate.pos).to.be.an('array')
-                    expect(candidate.pos).to.have.lengthOf.at.most(2)
+                    expect(candidate.pos).to.be.a('string')
                   })
                   expect(error).to.be.null
                   db.close()
@@ -247,21 +244,15 @@ describe('Election REST APIs', function() {
 
       const preForm = {
         name: validChoice.pre,
-        pos: [
-          'pre', 'vic'
-        ],
+        pos: 'pre',
       }
       const vicForm = {
         name: validChoice.vic,
-        pos: [
-          'vic', 'sec'
-        ],
+        pos: 'vic',
       }
       const secForm = {
         name: validChoice.sec,
-        pos: [
-          'sec'
-        ],
+        pos: 'sec',
       }
 
       const name = 'mrawesome'
