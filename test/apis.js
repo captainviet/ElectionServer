@@ -39,6 +39,9 @@ const apis = {
     submit: {
       self: 'submit',
     },
+    exists: {
+      self: 'exists',
+    },
   },
 }
 
@@ -170,6 +173,7 @@ describe('Election REST APIs', function() {
     const list = vote.list
     const submit = vote.submit
     const eradicate = vote.eradicate
+    const exists = vote.exists
 
     describe(list.self, function() {
 
@@ -374,6 +378,24 @@ describe('Election REST APIs', function() {
           done()
         })
       })
+
+    })
+
+    describe(exists.self, function() {
+      const existVote = 'abc'
+      const nonexistVote = 'def'
+      const voteExistsPaths = [
+        host, vote.self, exists.self, existVote
+      ]
+      const voteNonExistsPaths = [
+        host, vote.self, exists.self, nonexistVote
+      ]
+      const requestVoteExistsUrl = buildRequest(voteExistsPaths)
+      const requestVoteNonExistsUrl = buildRequest(voteNonExistsPaths)
+
+      it('returns true for existing vote')
+
+      it('returns false for non-existing vote')
 
     })
 

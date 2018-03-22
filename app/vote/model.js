@@ -4,6 +4,18 @@ const appConfig = config.app
 const AES = require('app/util/aes-crypto')
 const RSA = require('app/util/rsa-crypto')
 
+const exists = async(ctx) => {
+  const db = ctx.mongo.db(appConfig.db)
+  const { name } = ctx.params
+  const query = { name }
+  const vote = await db.collection('votes').findOne(query)
+  
+  return {
+    data: vote ? true : false,
+    error: null,
+  }
+}
+
 const eradicate = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const postBody = ctx.request.body
@@ -108,4 +120,5 @@ module.exports = {
   list,
   submit,
   eradicate,
+  exists,
 }

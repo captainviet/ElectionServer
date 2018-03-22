@@ -12,8 +12,13 @@ async function eradicate(ctx, next) {
   ctx.body = await Votes.eradicate(ctx)
 }
 
+async function exists(ctx, next) {
+  ctx.body = await Votes.exists(ctx)
+}
+
 module.exports = {
   list,
   submit,
   eradicate,
+  exists,
 }

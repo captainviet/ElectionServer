@@ -10,6 +10,7 @@ router.get('/candidate/list/', CandidateHandler.list)
 router.post('/candidate/add/', CandidateHandler.add)
 router.post('/candidate/eradicate/', CandidateHandler.eradicate)
 router.get('/vote/list/', VoteHandler.list)
+router.get('/vote/exists/:name', VoteHandler.exists)
 router.post('/vote/submit/', VoteHandler.submit)
 router.post('/vote/eradicate/', VoteHandler.eradicate)
 
