@@ -12,10 +12,12 @@
   "author": "Vince Dang <xuanvu001@e.ntu.edu.sg>",
   "license": "ISC",
   "dependencies": {
+    "aes-js": "^3.1.0",
     "chai": "^4.1.2",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-logger": "^3.2.0",
+    "koa-mongo": "^1.3.0",
     "koa-router": "^7.4.0",
     "mocha": "^5.0.4"
   }
