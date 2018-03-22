@@ -4,11 +4,8 @@ const appConfig = config.app
 const add = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const postBody = ctx.request.body
-  const name = postBody.name
-  const query = {
-    name,
-  }
-  const pos = postBody.pos
+  const { name, pos } = postBody
+  const query = { name, pos }
   const candidate = await db.collection('candidates').findOne(query)
 
   const response = {
@@ -19,10 +16,7 @@ const add = async(ctx) => {
   if (candidate) {
     response.error = 'Candidate already exists'
   } else {
-    const record = {
-      name,
-      pos,
-    }
+    const record = { name, pos }
     const res = await db.collection('candidates').insert(record)
     response.data = record
   }
@@ -33,10 +27,8 @@ const add = async(ctx) => {
 const eradicate = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const postBody = ctx.request.body
-  const name = postBody.name
-  const query = {
-    name,
-  }
+  const { name, pos } = postBody
+  const query = { name, pos }
   const candidate = await db.collection('candidates').findOne(query)
 
   const response = {
@@ -46,9 +38,7 @@ const eradicate = async(ctx) => {
 
   if (candidate) {
     const res = await db.collection('candidates').remove(query)
-    response.data = {
-      name,
-    }
+    response.data = query
   } else {
     response.error = 'No candidate with such name'
   }
@@ -58,7 +48,11 @@ const eradicate = async(ctx) => {
 
 const list = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
-  const candidates = await db.collection('candidates').find().toArray()
+  const query = {}
+  const opts = {
+    _id: 0,
+  }
+  const candidates = await db.collection('candidates').find(query, opts).toArray()
   const response = {
     data: candidates,
     error: null,

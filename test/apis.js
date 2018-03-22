@@ -322,9 +322,6 @@ describe('Election REST APIs', function() {
           const error = jsonBody.error
           expect(data).to.be.an('object')
           expect(data).to.have.property('name')
-          expect(data).to.have.property('vote')
-          const returnVote = data.vote
-          expect(returnVote).to.deep.equal(validChoice)
           expect(error).to.be.null
           done()
         })

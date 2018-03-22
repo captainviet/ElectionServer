@@ -7,10 +7,8 @@ const RSA = require('app/util/rsa-crypto')
 const eradicate = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const postBody = ctx.request.body
-  const name = postBody.name
-  const query = {
-    name,
-  }
+  const { name } = postBody
+  const query = { name }
   const userVote = await db.collection('votes').findOne(query)
 
   const response = {
@@ -20,9 +18,7 @@ const eradicate = async(ctx) => {
 
   if (userVote) {
     const result = await db.collection('votes').remove(query)
-    response.data = {
-      name,
-    }
+    response.data = query
   } else {
     response.error = 'Vote does not exists'
   }
@@ -30,7 +26,15 @@ const eradicate = async(ctx) => {
 
 const list = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
-  const votes = await db.collection('votes').find().toArray()
+  const query = {}
+  const opts = {
+    _id: 0,
+    name: 1,
+    vote: 1,
+    timestamp: 1,
+    hacks: 1,
+  }
+  const votes = await db.collection('votes').find(query, opts).toArray()
 
   const response = {
     data: votes,
@@ -42,23 +46,19 @@ const list = async(ctx) => {
 const submit = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const encryptedBody = ctx.request.body
-  const aesKey = RSA.decryptPrivate(encryptedBody.key)
-  const postBody = JSON.parse(AES.decrypt(AES.convertKeyString(aesKey), encryptedBody.message))
-  const name = postBody.name
-  const rawVote = postBody.vote
-  const query = {
-    name,
-  }
-  const userVote = await db.collection('votes').findOne(query)
+  const { key, message } = encryptedBody
+  const aesKey = RSA.decryptPrivate(key)
+  const postBody = JSON.parse(AES.decrypt(AES.convertKeyString(aesKey), message))
+  const { name, vote } = postBody
 
   const preQuery = {
-    name: rawVote['President'],
+    name: vote['President'],
   }
   const vicQuery = {
-    name: rawVote['Vice-President'],
+    name: vote['Vice-President'],
   }
   const secQuery = {
-    name: rawVote['Secretary'],
+    name: vote['Secretary'],
   }
   const pre = await db.collection('candidates').findOne(preQuery)
   const vic = await db.collection('candidates').findOne(vicQuery)
@@ -79,6 +79,8 @@ const submit = async(ctx) => {
       sec: sec._id,
     }
 
+    const query = { name }
+    const userVote = await db.collection('votes').findOne(query)
     if (userVote) {
       const update = {
         $push: {
@@ -95,10 +97,7 @@ const submit = async(ctx) => {
         hacks: [],
       }
       const result = await db.collection('votes').insert(record)
-      response.data = {
-        name,
-        vote: rawVote,
-      }
+      response.data = { name }
     }
 
   }
