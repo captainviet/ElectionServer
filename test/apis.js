@@ -225,17 +225,17 @@ describe('Election REST APIs', function() {
       const add = candidate.add
       const eradicate = candidate.eradicate
       const validChoice = {
-        pre: 'Quach Trung Quan',
-        vic: 'Nguyen Hong Duc',
-        sec: 'Phan Ngan',
+        'President': 'Quach Trung Quan',
+        'Vice-President': 'Nguyen Hong Duc',
+        'Secretary': 'Phan Ngan',
       }
-      validChoice.pre = encodeURIComponent(validChoice.pre)
-      validChoice.vic = encodeURIComponent(validChoice.vic)
-      validChoice.sec = encodeURIComponent(validChoice.sec)
+      validChoice['President'] = encodeURIComponent(validChoice['President'])
+      validChoice['Vice-President'] = encodeURIComponent(validChoice['Vice-President'])
+      validChoice['Secretary'] = encodeURIComponent(validChoice['Secretary'])
       const invalidChoice = {
-        pre: 'abc',
-        vic: 'xyz',
-        sec: 'tuv',
+        'President': 'abc',
+        'Vice-President': 'xyz',
+        'Secretary': 'tuv',
       }
       const candidateAddPaths = [
         host, candidate.self, add.self
@@ -243,15 +243,15 @@ describe('Election REST APIs', function() {
       const requestAddUrl = buildRequest(candidateAddPaths)
 
       const preForm = {
-        name: validChoice.pre,
+        name: validChoice['President'],
         pos: 'pre',
       }
       const vicForm = {
-        name: validChoice.vic,
+        name: validChoice['Vice-President'],
         pos: 'vic',
       }
       const secForm = {
-        name: validChoice.sec,
+        name: validChoice['Secretary'],
         pos: 'sec',
       }
 

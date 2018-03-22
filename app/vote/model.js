@@ -47,13 +47,13 @@ const submit = async(ctx) => {
   const userVote = await db.collection('votes').findOne(query)
 
   const preQuery = {
-    name: rawVote.pre,
+    name: rawVote['President'],
   }
   const vicQuery = {
-    name: rawVote.vic,
+    name: rawVote['Vice-President'],
   }
   const secQuery = {
-    name: rawVote.sec,
+    name: rawVote['Secretary'],
   }
   const pre = await db.collection('candidates').findOne(preQuery)
   const vic = await db.collection('candidates').findOne(vicQuery)
