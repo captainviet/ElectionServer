@@ -5,4 +5,8 @@ module.exports = {
     db: 'db',
     port: port-number,
   },
+  crypto: {
+    privateKey: 'private key path',
+    publicKey: 'public key path',
+  },
 }
