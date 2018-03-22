@@ -12,6 +12,7 @@
   "author": "Vince Dang <xuanvu001@e.ntu.edu.sg>",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^2.2.1",
     "aes-js": "^3.1.0",
     "chai": "^4.1.2",
     "koa": "^2.5.0",
