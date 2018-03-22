@@ -7,6 +7,8 @@ const MongoClient = mongodb.MongoClient
 const config = require('app/config')
 const appConfig = config.app
 const { buildRequest } = require('app/util/requestBuilder')
+const AES = require('app/util/aes-crypto')
+const RSA = require('app/util/rsa-crypto')
 
 const requestFn = (url, callback) => {
   return () => {
@@ -303,7 +305,13 @@ describe('Election REST APIs', function() {
 
       it('returns the content of the vote if the candidate exists', function(done) {
         const url = requestSubmitUrl
-        const form = validForm
+        const aesKeyString = AES.generateKeyString()
+        const aesKey = AES.convertKeyString(aesKeyString)
+        const message = AES.encrypt(aesKey, JSON.stringify(validForm))
+        const key = RSA.encryptPublic(aesKeyString)
+        const form = {
+          message, key
+        }
         request.post({url, form}, (e, res, body) => {
           expect(res.statusCode).to.equal(200)
           const jsonBody = JSON.parse(body)
@@ -324,7 +332,13 @@ describe('Election REST APIs', function() {
 
       it('returns "Vote already cast" if the vote has been casted', function(done) {
         const url = requestSubmitUrl
-        const form = validForm
+        const aesKeyString = AES.generateKeyString()
+        const aesKey = AES.convertKeyString(aesKeyString)
+        const message = AES.encrypt(aesKey, JSON.stringify(validForm))
+        const key = RSA.encryptPublic(aesKeyString)
+        const form = {
+          message, key
+        }
         request.post({url, form}, (e, res, body) => {
           expect(res.statusCode).to.equal(200)
           const jsonBody = JSON.parse(body)
@@ -342,7 +356,13 @@ describe('Election REST APIs', function() {
 
       it('returns "Candidate not valid" if the candidates doesn\'t exist', function(done) {
         const url = requestSubmitUrl
-        const form = invalidForm 
+        const aesKeyString = AES.generateKeyString()
+        const aesKey = AES.convertKeyString(aesKeyString)
+        const message = AES.encrypt(aesKey, JSON.stringify(invalidForm))
+        const key = RSA.encryptPublic(aesKeyString)
+        const form = {
+          message, key
+        }
         request.post({url, form}, (e, res, body) => {
           expect(res.statusCode).to.equal(200)
           const jsonBody = JSON.parse(body)

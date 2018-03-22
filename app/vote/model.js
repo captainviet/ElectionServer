@@ -1,6 +1,9 @@
 const config = require('app/config')
 const appConfig = config.app
 
+const AES = require('app/util/aes-crypto')
+const RSA = require('app/util/rsa-crypto')
+
 const eradicate = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const postBody = ctx.request.body
@@ -38,7 +41,9 @@ const list = async(ctx) => {
 
 const submit = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
-  const postBody = ctx.request.body
+  const encryptedBody = ctx.request.body
+  const aesKey = RSA.decryptPrivate(encryptedBody.key)
+  const postBody = JSON.parse(AES.decrypt(AES.convertKeyString(aesKey), encryptedBody.message))
   const name = postBody.name
   const rawVote = postBody.vote
   const query = {
