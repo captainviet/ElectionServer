@@ -65,12 +65,15 @@ const submit = async(ctx) => {
 
   const preQuery = {
     name: vote['President'],
+    pos: 'pre',
   }
   const vicQuery = {
     name: vote['Vice-President'],
+    pos: 'vic',
   }
   const secQuery = {
     name: vote['Secretary'],
+    pos: 'sec',
   }
   const pre = await db.collection('candidates').findOne(preQuery)
   const vic = await db.collection('candidates').findOne(vicQuery)
