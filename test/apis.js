@@ -382,8 +382,105 @@ describe('Election REST APIs', function() {
     })
 
     describe(exists.self, function() {
+      const add = candidate.add
+      const eradicate = candidate.eradicate
+
       const existVote = 'abc'
       const nonexistVote = 'def'
+
+      const voteEradicatePaths = [
+        host, vote.self, eradicate.self
+      ]
+      const requestVoteEradicateUrl = buildRequest(voteEradicatePaths)
+
+      const validChoice = {
+        'President': 'Quach Trung Quan',
+        'Vice-President': 'Nguyen Hong Duc',
+        'Secretary': 'Phan Ngan',
+      }
+      validChoice['President'] = encodeURIComponent(validChoice['President'])
+      validChoice['Vice-President'] = encodeURIComponent(validChoice['Vice-President'])
+      validChoice['Secretary'] = encodeURIComponent(validChoice['Secretary'])
+
+      const candidateAddPaths = [
+        host, candidate.self, add.self
+      ]
+      const requestAddUrl = buildRequest(candidateAddPaths)
+
+      const preForm = {
+        name: validChoice['President'],
+        pos: 'pre',
+      }
+      const vicForm = {
+        name: validChoice['Vice-President'],
+        pos: 'vic',
+      }
+      const secForm = {
+        name: validChoice['Secretary'],
+        pos: 'sec',
+      }
+
+      before(function(done) {
+        const existForm = {
+          name: existVote,
+          vote: validChoice,
+        }
+        const nonexistForm = {
+          name: nonexistVote,
+          vote: validChoice,
+        }
+        const removeVote = {
+          url: requestVoteEradicateUrl,
+          form: nonexistForm,
+        }
+        const eradicateVote = requestFn(removeVote, done)
+
+        const voteSubmitPaths = [
+          host, vote.self, submit.self
+        ]
+        const requestSubmitUrl = buildRequest(voteSubmitPaths)
+        const aesKeyString = AES.generateKeyString()
+        const aesKey = AES.convertKeyString(aesKeyString)
+        const message = AES.encrypt(aesKey, JSON.stringify(existForm))
+        const key = RSA.encryptPublic(aesKeyString)
+        const form = {
+          message, key
+        }
+        const addVote = {
+          url: requestSubmitUrl,
+          form,
+        }
+        const submitVote = requestFn(addVote, eradicateVote) 
+        const url = requestAddUrl
+        const addPre = requestFn({url, form: preForm}, submitVote)
+        const addVic = requestFn({url, form: vicForm}, addPre)
+        const addSec = requestFn({url, form: secForm}, addVic)
+        addSec()
+      })
+
+      const candidateEradicatePaths = [
+        host, candidate.self, eradicate.self
+      ]
+      const requestEradicateUrl = buildRequest(candidateEradicatePaths)
+
+      after(function(done) {
+        const url = requestEradicateUrl
+        const eradicatePre = requestFn({url, form: preForm}, done)
+        const eradicateVic = requestFn({url, form: vicForm}, eradicatePre)
+        const eradicateSec = requestFn({url, form: secForm}, eradicateVic)
+
+        const existForm = {
+          name: existVote,
+          vote: validChoice,
+        }
+        const removeVote = {
+          url: requestVoteEradicateUrl,
+          form: existForm,
+        }
+        const eradicateVote = requestFn(removeVote, eradicateSec)
+        eradicateVote()
+      })
+
       const voteExistsPaths = [
         host, vote.self, exists.self, existVote
       ]
@@ -393,9 +490,36 @@ describe('Election REST APIs', function() {
       const requestVoteExistsUrl = buildRequest(voteExistsPaths)
       const requestVoteNonExistsUrl = buildRequest(voteNonExistsPaths)
 
-      it('returns true for existing vote')
+      it('returns true for existing vote', function(done) {
+        request(requestVoteExistsUrl, (e, res, body) => {
+          expect(res.statusCode).to.equal(200)
+          const jsonBody = JSON.parse(body)
+          console.log(jsonBody)
+          expect(jsonBody).to.be.an('object')
+          expect(jsonBody).to.have.property('data')
+          expect(jsonBody).to.have.property('error')
+          expect(jsonBody.data).to.be.true
+          expect(jsonBody.error).to.be.null
+          done()
 
-      it('returns false for non-existing vote')
+        })
+
+      })
+
+      it('returns false for non-existing vote', function(done) {
+        request(requestVoteNonExistsUrl, (e, res, body) => {
+          expect(res.statusCode).to.equal(200)
+          const jsonBody = JSON.parse(body)
+          expect(jsonBody).to.be.an('object')
+          expect(jsonBody).to.have.property('data')
+          expect(jsonBody).to.have.property('error')
+          expect(jsonBody.data).to.be.false
+          expect(jsonBody.error).to.be.null
+          done()
+
+        })
+
+      })
 
     })
 
