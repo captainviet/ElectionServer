@@ -231,8 +231,8 @@ describe('Election REST APIs', function() {
       const add = candidate.add
       const eradicate = candidate.eradicate
       const validChoice = {
-        'President': 'Quach Trung Quan',
-        'Vice-President': 'Nguyen Hong Duc',
+        'President': 'Quach Quan',
+        'Vice-President': 'Nguyen Duc',
         'Secretary': 'Phan Ngan',
       }
       validChoice['President'] = encodeURIComponent(validChoice['President'])
@@ -394,8 +394,8 @@ describe('Election REST APIs', function() {
       const requestVoteEradicateUrl = buildRequest(voteEradicatePaths)
 
       const validChoice = {
-        'President': 'Quach Trung Quan',
-        'Vice-President': 'Nguyen Hong Duc',
+        'President': 'Quach Quan',
+        'Vice-President': 'Nguyen Duc',
         'Secretary': 'Phan Ngan',
       }
       validChoice['President'] = encodeURIComponent(validChoice['President'])
@@ -494,7 +494,6 @@ describe('Election REST APIs', function() {
         request(requestVoteExistsUrl, (e, res, body) => {
           expect(res.statusCode).to.equal(200)
           const jsonBody = JSON.parse(body)
-          console.log(jsonBody)
           expect(jsonBody).to.be.an('object')
           expect(jsonBody).to.have.property('data')
           expect(jsonBody).to.have.property('error')
