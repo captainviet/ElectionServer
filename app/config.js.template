@@ -4,6 +4,10 @@ module.exports = {
     'mongourl',
     db: 'db',
     port: port-number,
+    expose: {
+      env: 'prod dev or qa..',
+      domain: 'subdomain of env',
+    },
   },
   crypto: {
     privateKey: 'private key path',

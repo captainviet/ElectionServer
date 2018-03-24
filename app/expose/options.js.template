@@ -1,0 +1,32 @@
+const registry = {
+  candidate: {
+    list: 'route for candidate list',
+  },
+  vote: {
+    list: 'route for vote list',
+  },
+}
+
+module.exports = {
+  registry,
+  dev: {
+    all: [{
+      path: registry.candidate.list,
+      method: get,
+    }, {
+      path: registry.vote.list,
+      method: get,
+    }],
+  },
+  prod: {
+    vote: [{
+      path: registry.candidate.list,
+      method: get,
+    }],
+    chase: [{
+      path: registry.vote.list,
+      method: get,
+    }],
+  },
+}
+
