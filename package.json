@@ -20,6 +20,7 @@
     "koa-logger": "^3.2.0",
     "koa-mongo": "^1.3.0",
     "koa-router": "^7.4.0",
-    "mocha": "^5.0.4"
+    "mocha": "^5.0.4",
+    "wpapi": "^1.1.2"
   }
 }

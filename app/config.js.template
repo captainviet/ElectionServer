@@ -13,4 +13,10 @@ module.exports = {
     privateKey: 'private key path',
     publicKey: 'public key path',
   },
+  wp: {
+    endpoint: 'wp api endpoint',
+    username: 'admin username',
+    password: 'admin password',
+    limit: number of items,
+  },
 }

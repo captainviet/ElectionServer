@@ -4,6 +4,8 @@ const appConfig = config.app
 const AES = require('app/util/aes-crypto')
 const RSA = require('app/util/rsa-crypto')
 
+const VoteValidator = require('app/vote/validator')
+
 const exists = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
   const { name } = ctx.params
@@ -38,18 +40,52 @@ const eradicate = async(ctx) => {
 
 const list = async(ctx) => {
   const db = ctx.mongo.db(appConfig.db)
-  const query = {}
-  const opts = {
+  const attemptsQuery = {
+    hacks: {
+      $ne: [],
+    },
+  }
+  const attemptsOpts = {
+    _id: 0,
+    name: 1,
+  }
+  const attempts = await db.collection('votes').find(attemptsQuery, attemptsOpts).toArray()
+  VoteValidator.logAttempts(attempts)
+  const voteQuery = {
+    hacks: {
+      $eq: [],
+    },
+  }
+  const voteOpts = {
     _id: 0,
     name: 1,
     vote: 1,
-    timestamp: 1,
-    hacks: 1,
   }
-  const votes = await db.collection('votes').find(query, opts).toArray()
+  const votes = await db.collection('votes').find(voteQuery, voteOpts).toArray()
+  const candidateQuery = {}
+  const candidateOpts = {}
+  const candidates = await db.collection('candidates').find(candidateQuery, candidateOpts).toArray()
+  const idCandidateMap = candidates.reduce((map, candidate) => {
+    const { _id, name } = candidate
+    map[_id] = name
+    return map
+  }, {})
+
+  const filteredVotes = await VoteValidator.filterUnregistered(votes.map(vote => {
+    vote.name = vote.name.toLowerCase()
+    vote.name = vote.name.replace('.', '-')
+    return vote
+  }))
+  const data = filteredVotes.map(vote => {
+    const result = {} 
+    for (let i in vote) {
+      result[i] = decodeURIComponent(idCandidateMap[vote[i]])
+    }
+    return result
+  })
 
   const response = {
-    data: votes,
+    data,
     error: null,
   }
   return response

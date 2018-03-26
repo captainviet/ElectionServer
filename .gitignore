@@ -2,3 +2,4 @@ config.js
 options.js
 node_modules/
 crypto/
+hack-log/

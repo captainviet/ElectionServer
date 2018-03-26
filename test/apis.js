@@ -183,45 +183,28 @@ describe('Election REST APIs', function() {
       const requestVoteListUrl = buildRequest(voteListPaths)
 
       it('returns all votes', function(done) {
-        MongoClient.connect(appConfig.mongo, (e, db) => {
-          if (e) {
-            db.close()
-            done(e)
-          } else {
-            const election = db.db(appConfig.db)
-            election.collection('votes').count((e, res) => {
-              if (e) {
-                db.close()
-                done(e)
-              } else {
-                const expectCount = res
-                request(requestVoteListUrl, (e, res, body) => {
-                  expect(res.statusCode).to.equal(200)
-                  const jsonBody = JSON.parse(body)
-                  expect(jsonBody).to.be.an('object')
-                  expect(jsonBody).to.have.property('data')
-                  expect(jsonBody).to.have.property('error')
-                  const data = jsonBody.data
-                  const error = jsonBody.error
-                  expect(data).to.be.an('array').that.has.lengthOf(expectCount)
-                  data.forEach((candidate) => {
-                    expect(candidate).to.have.property('name')
-                    expect(candidate).to.have.property('vote')
-                    expect(candidate).to.have.property('timestamp')
-                    expect(candidate).to.have.property('hacks')
-                    expect(candidate.name).to.be.a('string')
-                    expect(candidate.vote).to.be.an('object')
-                    expect(candidate.timestamp).to.be.a('string')
-                    expect(candidate.hacks).to.be.an('array')
-                  })
-                  expect(error).to.be.null
-                  db.close()
-                  done()
-                })
-              }
-            })
-          }
+        request(requestVoteListUrl, (e, res, body) => {
+          expect(res.statusCode).to.equal(200)
+          const jsonBody = JSON.parse(body)
+          expect(jsonBody).to.be.an('object')
+          expect(jsonBody).to.have.property('data')
+          expect(jsonBody).to.have.property('error')
+          const data = jsonBody.data
+          const error = jsonBody.error
+          expect(data).to.be.an('array')
+          data.forEach((vote) => {
+            expect(vote).to.be.an('object')
+            expect(vote).to.have.property('pre')
+            expect(vote).to.have.property('vic')
+            expect(vote).to.have.property('sec')
+            expect(vote.pre).to.be.a('string')
+            expect(vote.vic).to.be.a('string')
+            expect(vote.sec).to.be.a('string')
+          })
+          expect(error).to.be.null
+          done()
         })
+
       })
 
     })
