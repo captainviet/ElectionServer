@@ -65,7 +65,11 @@ const list = async(ctx) => {
   const candidateQuery = {}
   const candidateOpts = {}
   const candidates = await db.collection('candidates').find(candidateQuery, candidateOpts).toArray()
-  const idCandidateMap = candidates.reduce((map, candidate) => {
+  const decodedNames = candidates.map(candidate => {
+    candidate.name = decodeURIComponent(candidate.name)
+    return candidate
+  })
+  const idCandidateMap = decodedNames.reduce((map, candidate) => {
     const { _id, name } = candidate
     map[_id] = name
     return map
@@ -76,16 +80,31 @@ const list = async(ctx) => {
     vote.name = vote.name.replace('.', '-')
     return vote
   }))
-  const data = filteredVotes.map(vote => {
+  const voteData = filteredVotes.map(vote => {
     const result = {} 
     for (let i in vote) {
-      result[i] = decodeURIComponent(idCandidateMap[vote[i]])
+      result[i] = idCandidateMap[vote[i]]
     }
     return result
   })
+  const rawCandData = candidates.reduce((map, candidate) => {
+    if (!map[candidate.pos]) {
+      map[candidate.pos] = []
+    }
+    map[candidate.pos].push(candidate.name)
+    return map
+  }, {})
+  const candData = {
+    'President': rawCandData.pre,
+    'Vice-President': rawCandData.vic,
+    'Secretary': rawCandData.sec,
+  }
 
   const response = {
-    data,
+    data: {
+      votes: voteData,
+      candidates: candData,
+    },
     error: null,
   }
   return response

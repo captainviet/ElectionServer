@@ -191,8 +191,24 @@ describe('Election REST APIs', function() {
           expect(jsonBody).to.have.property('error')
           const data = jsonBody.data
           const error = jsonBody.error
-          expect(data).to.be.an('array')
-          data.forEach((vote) => {
+          expect(data).to.be.an('object')
+          expect(data).to.have.property('candidates')
+          expect(data).to.have.property('votes')
+          const votes = data.votes
+          const candidates = data.candidates
+          expect(candidates).to.have.property('Vice-President')
+          expect(candidates).to.have.property('Secretary')
+          expect(candidates['President']).to.be.an('array').lengthOf(3)
+          expect(candidates['Vice-President']).to.be.an('array').lengthOf(6)
+          expect(candidates['Secretary']).to.be.an('array').lengthOf(2)
+          for (let pos in candidates) {
+            const names = candidates[pos]
+            expect(names).to.be.an('array')
+            names.forEach(name => {
+              expect(name).to.be.a('string')
+            })
+          }
+          votes.forEach((vote) => {
             expect(vote).to.be.an('object')
             expect(vote).to.have.property('pre')
             expect(vote).to.have.property('vic')
