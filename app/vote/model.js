@@ -78,6 +78,7 @@ const list = async(ctx) => {
   const filteredVotes = await VoteValidator.filterUnregistered(votes.map(vote => {
     vote.name = vote.name.toLowerCase()
     vote.name = vote.name.replace('.', '-')
+    vote.name = vote.name.replace(' ', '-')
     return vote
   }))
   const voteData = filteredVotes.map(vote => {
