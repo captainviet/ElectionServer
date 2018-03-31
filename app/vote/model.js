@@ -61,7 +61,7 @@ const list = async(ctx) => {
     name: 1,
     vote: 1,
   }
-  const votes = await db.collection('votes').find(voteQuery, voteOpts).toArray()
+  const votes = await db.collection('votes').find(voteQuery, voteOpts).sort({ name: 1 }).toArray()
   const candidateQuery = {}
   const candidateOpts = {}
   const candidates = await db.collection('candidates').find(candidateQuery, candidateOpts).toArray()
